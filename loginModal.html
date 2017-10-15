@@ -1,0 +1,66 @@
+<?php
+   
+   //Database connection
+   include ("DBconnection.php");
+   //Session start
+   session_start();   
+   
+?>
+<html>   
+   <head>
+      <title>Sports Manager</title>
+      <?php echo "<link rel='stylesheet' type='text/css' href='Login.css' />";?> 
+   </head>	
+   <body background="loginLogo.jpg" style="background:url('loginLogo.jpg');background-repeat:repeat;img-width:600px;img-height:470px;">      
+      
+      <div class = "container form-signin" align="center">         
+         <?php
+            
+			//Validation for login screen
+			if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password']))
+			{
+
+			  //removal of special characters
+			  $myusername = mysqli_real_escape_string($db,$_POST['username']);
+			  $mypassword = mysqli_real_escape_string($db,$_POST['password']);
+			  //md5 hash password conversion
+			  $pass = md5($mypassword);			  
+			  
+			  //Select from database to validate details entered exist
+			  $sql = "Select UserID From users Where Username = '$myusername' and Password = '$pass'";
+			  $result = mysqli_query($db,$sql);
+			  $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+			  
+			  $count = mysqli_num_rows($result);
+				
+			  //if values match redirect to this page	
+			  if($count == 1) {
+				 
+				 header("location: index.php");				 
+				 
+			  }else {
+				  
+				 //if values fail, display error message and redisplay login page 
+				 $error = "Your Login Name or Password is invalid";
+				 echo $error;
+			  }
+		   }
+		   
+         ?>
+      </div>       
+      <div class = "container-fluid" align="center" >      
+         <form class = "form-signin" role = "form" action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method = "post">
+			<h2> User login</h2>
+			<br clear="both">
+            <h4 class = "form-signin-heading">
+			
+				<input type = "username" class = "form-control" name = "username" placeholder = "Username"  required autofocus style="width:250px;"></br>
+			
+				<input type = "password" class="form-control input-sm input-primary" id="inputlg" name = "password" placeholder = "Password" required style="width:250px;"></br>
+				<button class = "btn btn-sm btn-primary" type = "submit" name = "login">Login</button></br>
+         </form> 	  
+				
+				Need to Register? Click here <a href = "Register.php" tite = "Register">Register
+      </div>       
+   </body>
+</html>
